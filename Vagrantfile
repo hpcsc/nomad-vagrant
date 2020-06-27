@@ -3,7 +3,7 @@ client_1_ip =  "192.168.205.16"
 client_2_ip =  "192.168.205.17"
 
 cluster_config = [
-  { :name => "server", :ip => server_ip, :config => "server" },
+  { :name => "server", :ip => server_ip, :config => "server", ports: ["4646"] },
   { :name => "client-1", :ip => client_1_ip, :config => "client" },
   { :name => "client-2", :ip => client_2_ip, :config => "client" }
 ]
@@ -15,6 +15,12 @@ Vagrant.configure("2") do |config|
       instance.vm.hostname = instance_config[:name]
 
       instance.vm.network :private_network, ip: instance_config[:ip], netmask: "255.255.255.0"
+
+      if instance_config[:ports]
+        instance_config[:ports].each do |port|
+          instance.vm.network "forwarded_port", guest: port, host: port, auto_correct: true
+        end
+      end
 
       instance.vm.provider "virtualbox" do |v|
         v.name = instance_config[:name]
