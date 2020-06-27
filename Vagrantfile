@@ -29,6 +29,7 @@ Vagrant.configure("2") do |config|
         v.customize ["modifyvm", :id, "--cpus", 1]
       end
 
+      instance.vm.provision "shell", path: "scripts/install-docker.sh"
       instance.vm.provision "shell", path: "scripts/download-nomad.sh", args: "0.11.3"
       instance.vm.provision "shell", path: "scripts/setup-nomad-service.sh", args: [instance_config[:config], server_ip, instance_config[:ip]]
     end
